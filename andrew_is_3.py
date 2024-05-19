@@ -35,7 +35,7 @@ def display_invitation():
     """
     st.markdown(video_html, unsafe_allow_html=True)
 
-    st.header("RSVP below and let us know if the fam is coming")
+    st.header("RSVP below and let us know if the fam is coming!")
     st.write("Contact Devon if you need anything @ 512-983-3869")
 
 # Function to handle RSVP
@@ -44,30 +44,26 @@ def rsvp_form():
         name = st.text_input("Your Name")
         num_people = st.number_input("Number of People Attending", min_value=1, step=1)
         attendees = st.text_area("Names of Attendees")
-        comments = st.text_area("Any additional comments or requirements?")
+        comments = st.text_area("Anything additional you'd like to share?")
         submit_button = st.form_submit_button(label='Submit RSVP')
 
-    if submit_button:
-        rsvps = load_rsvps()
-        rsvps.append({
-            'name': name,
-            'num_people': num_people,
-            'attendees': attendees,
-            'comments': comments
-        })
-        save_rsvps(rsvps)
-        st.success("Thank you for your RSVP!")
+        if submit_button:
+            rsvps = load_rsvps()
+            rsvps.append({
+                'name': name,
+                'num_people': num_people,
+                'attendees': attendees,
+                'comments': comments
+            })
+            save_rsvps(rsvps)
+            st.success("Thank you for your RSVP!")
 
 # Function to display all RSVPs
 def display_rsvps():
     rsvps = load_rsvps()
     if rsvps:
         st.subheader("RSVP List")
-        current_user = st.text_input("Enter your name to edit your RSVP")
         df = pd.DataFrame(rsvps)
-        if current_user in df['name'].values:
-            user_row_index = df[df['name'] == current_user].index[0]
-            df.loc[user_row_index, 'Edit'] = 'Edit'  # Add "Edit" button for the user's entry
         st.table(df)
     else:
         st.write("No RSVPs yet.")
