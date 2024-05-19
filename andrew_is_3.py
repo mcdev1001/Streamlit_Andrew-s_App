@@ -35,7 +35,7 @@ def display_invitation():
     """
     st.markdown(video_html, unsafe_allow_html=True)
 
-    st.header("RSVP below and let us know if the fam is coming!")
+    st.header("RSVP below and let us know if the fam is coming")
     st.write("Contact Devon if you need anything @ 512-983-3869")
 
 # Function to handle RSVP
@@ -44,19 +44,19 @@ def rsvp_form():
         name = st.text_input("Your Name")
         num_people = st.number_input("Number of People Attending", min_value=1, step=1)
         attendees = st.text_area("Names of Attendees")
-        comments = st.text_area("Anything additional you'd like to share?")
+        comments = st.text_area("Any additional comments or requirements?")
         submit_button = st.form_submit_button(label='Submit RSVP')
 
-        if submit_button:
-            rsvps = load_rsvps()
-            rsvps.append({
-                'name': name,
-                'num_people': num_people,
-                'attendees': attendees,
-                'comments': comments
-            })
-            save_rsvps(rsvps)
-            st.success("Thank you for your RSVP!")
+    if submit_button:
+        rsvps = load_rsvps()
+        rsvps.append({
+            'name': name,
+            'num_people': num_people,
+            'attendees': attendees,
+            'comments': comments
+        })
+        save_rsvps(rsvps)
+        st.success("Thank you for your RSVP!")
 
 # Function to display all RSVPs
 def display_rsvps():
@@ -64,6 +64,7 @@ def display_rsvps():
     if rsvps:
         st.subheader("RSVP List")
         df = pd.DataFrame(rsvps)
+        df['Edit'] = df.index  # Adding a column with index as the edit button
         st.table(df)
     else:
         st.write("No RSVPs yet.")
