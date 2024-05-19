@@ -1,17 +1,22 @@
 import streamlit as st
 import pandas as pd
+from streamlit.report_thread import get_report_ctx
+
+# Function to get or create session state
+def get_session_state(**kwargs):
+    ctx = get_report_ctx()
+    session = ctx.session_id
+    session_state = st.session_state.get(session, **kwargs)
+    st.session_state[session] = session_state
+    return session_state
 
 # Placeholder for RSVP responses
-if 'rsvps' not in st.session_state:
-    st.session_state['rsvps'] = []
+session_state = get_session_state(rsvps=[])
 
 # Function to display the invitation
 def display_invitation():
-    
-    
     st.title("You're Invited!")
-    #st.header("Join us for a fun-filled party!")
-
+    
     # Embed the video using an iframe
     video_html = """
     <div style="position: relative; width: 100%; height: 0; padding-top: 140.0000%;
@@ -21,16 +26,9 @@ def display_invitation():
         src="https://www.canva.com/design/DAGFlygWz0w/rjhKT1cVmx1jmgnT4494BA/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
       </iframe>
     </div>
-    
     """
-   
     st.markdown(video_html, unsafe_allow_html=True)
 
-    #st.write("""
-    #**Date:** June 10, 2024
-    #**Time:** 6:00 PM - 10:00 PM
-    #**Venue:** 123 Party Lane, Fun Town
-    #""")
     st.header("RSVP below and let us know if the fam is coming")
     st.write("Contact Devon if you need anything @ 512-983-3869")
 
@@ -44,7 +42,7 @@ def rsvp_form():
         submit_button = st.form_submit_button(label='Submit RSVP')
 
         if submit_button:
-            st.session_state['rsvps'].append({
+            session_state.rsvps.append({
                 'name': name,
                 'num_people': num_people,
                 'attendees': attendees,
@@ -54,9 +52,9 @@ def rsvp_form():
 
 # Function to display all RSVPs
 def display_rsvps():
-    if st.session_state['rsvps']:
+    if session_state.rsvps:
         st.subheader("RSVP List")
-        df = pd.DataFrame(st.session_state['rsvps'])
+        df = pd.DataFrame(session_state.rsvps)
         st.table(df)
     else:
         st.write("No RSVPs yet.")
