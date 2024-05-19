@@ -1,9 +1,23 @@
 import streamlit as st
 import pandas as pd
+import json
+import os
 
-# Placeholder for RSVP responses
-if 'rsvps' not in st.session_state:
-    st.session_state['rsvps'] = []
+# File to store RSVP data
+RSVP_FILE = 'rsvps.json'
+
+# Function to load RSVP data from file
+def load_rsvps():
+    if os.path.exists(RSVP_FILE):
+        with open(RSVP_FILE, 'r') as file:
+            return json.load(file)
+    else:
+        return []
+
+# Function to save RSVP data to file
+def save_rsvps(rsvps):
+    with open(RSVP_FILE, 'w') as file:
+        json.dump(rsvps, file)
 
 # Function to display the invitation
 def display_invitation():
@@ -34,19 +48,22 @@ def rsvp_form():
         submit_button = st.form_submit_button(label='Submit RSVP')
 
         if submit_button:
-            st.session_state['rsvps'].append({
+            rsvps = load_rsvps()
+            rsvps.append({
                 'name': name,
                 'num_people': num_people,
                 'attendees': attendees,
                 'comments': comments
             })
+            save_rsvps(rsvps)
             st.success("Thank you for your RSVP!")
 
 # Function to display all RSVPs
 def display_rsvps():
-    if st.session_state['rsvps']:
+    rsvps = load_rsvps()
+    if rsvps:
         st.subheader("RSVP List")
-        df = pd.DataFrame(st.session_state['rsvps'])
+        df = pd.DataFrame(rsvps)
         st.table(df)
     else:
         st.write("No RSVPs yet.")
