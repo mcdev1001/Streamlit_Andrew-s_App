@@ -63,8 +63,11 @@ def display_rsvps():
     rsvps = load_rsvps()
     if rsvps:
         st.subheader("RSVP List")
+        current_user = st.text_input("Enter your name to edit your RSVP")
         df = pd.DataFrame(rsvps)
-        df['Edit'] = df.index  # Adding a column with index as the edit button
+        if current_user in df['name'].values:
+            user_row_index = df[df['name'] == current_user].index[0]
+            df.loc[user_row_index, 'Edit'] = 'Edit'  # Add "Edit" button for the user's entry
         st.table(df)
     else:
         st.write("No RSVPs yet.")
