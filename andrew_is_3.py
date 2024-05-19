@@ -36,7 +36,7 @@ def display_invitation():
     st.markdown(video_html, unsafe_allow_html=True)
 
     st.header("RSVP below and let us know if the fam is coming!")
-    st.write("Contact Devon if you need anything @ 512-983-3869")
+    st.write("Contact Devon if you need anything\n512-983-3869")
 
 # Function to handle RSVP
 def rsvp_form():
