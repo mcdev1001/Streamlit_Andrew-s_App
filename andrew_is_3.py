@@ -1,17 +1,9 @@
 import streamlit as st
 import pandas as pd
 
-# Function to get or create session state
-def get_session_state(**kwargs):
-    session_id = st.report_thread.get_report_ctx().session_id
-    if hasattr(st.session_state, session_id):
-        return getattr(st.session_state, session_id)
-    else:
-        setattr(st.session_state, session_id, type('SessionState', (), kwargs)())
-        return getattr(st.session_state, session_id)
-
 # Placeholder for RSVP responses
-session_state = get_session_state(rsvps=[])
+if 'rsvps' not in st.session_state:
+    st.session_state['rsvps'] = []
 
 # Function to display the invitation
 def display_invitation():
@@ -42,7 +34,7 @@ def rsvp_form():
         submit_button = st.form_submit_button(label='Submit RSVP')
 
         if submit_button:
-            session_state.rsvps.append({
+            st.session_state['rsvps'].append({
                 'name': name,
                 'num_people': num_people,
                 'attendees': attendees,
@@ -52,9 +44,9 @@ def rsvp_form():
 
 # Function to display all RSVPs
 def display_rsvps():
-    if session_state.rsvps:
+    if st.session_state['rsvps']:
         st.subheader("RSVP List")
-        df = pd.DataFrame(session_state.rsvps)
+        df = pd.DataFrame(st.session_state['rsvps'])
         st.table(df)
     else:
         st.write("No RSVPs yet.")
