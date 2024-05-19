@@ -44,7 +44,7 @@ def rsvp_form():
         name = st.text_input("Your Name")
         num_people = st.number_input("Number of People Attending", min_value=1, step=1)
         attendees = st.text_area("Names of Attendees")
-        comments = st.text_area("Any additional comments?")
+        comments = st.text_area("Anything additional you'd like to share?")
         submit_button = st.form_submit_button(label='Submit RSVP')
 
         if submit_button:
