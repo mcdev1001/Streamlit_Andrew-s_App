@@ -35,7 +35,7 @@ def display_invitation():
     """
     st.markdown(video_html, unsafe_allow_html=True)
 
-    st.header("RSVP below and let us know if the fam is coming")
+    st.header("RSVP below and let us know if the fam is coming!")
     st.write("Contact Devon if you need anything @ 512-983-3869")
 
 # Function to handle RSVP
@@ -44,7 +44,7 @@ def rsvp_form():
         name = st.text_input("Your Name")
         num_people = st.number_input("Number of People Attending", min_value=1, step=1)
         attendees = st.text_area("Names of Attendees")
-        comments = st.text_area("Any additional comments or requirements?")
+        comments = st.text_area("Any additional comments?")
         submit_button = st.form_submit_button(label='Submit RSVP')
 
         if submit_button:
