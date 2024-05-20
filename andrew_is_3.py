@@ -78,7 +78,7 @@ def display_rsvps():
     rsvps = load_rsvps()
     if rsvps:
         st.subheader("RSVP List")
-        df = pd.DataFrame(rsvps, columns=['Name', 'Number of People', 'Attendees', 'Comments'])
+        df = pd.DataFrame(rsvps, columns=['ID', 'Name', 'Number of People', 'Attendees', 'Comments'])
         st.table(df)
     else:
         st.write("No RSVPs yet.")
