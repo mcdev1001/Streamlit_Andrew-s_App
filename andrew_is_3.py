@@ -1,23 +1,45 @@
 import streamlit as st
 import pandas as pd
-import json
-import os
+import sqlite3
 
-# File to store RSVP data
-RSVP_FILE = 'rsvps.json'
+# SQLite database file
+DB_FILE = 'rsvps.db'
 
-# Function to load RSVP data from file
+# Initialize the database
+def init_db():
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS rsvps (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            num_people INTEGER,
+            attendees TEXT,
+            comments TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+# Function to load RSVP data from the database
 def load_rsvps():
-    if os.path.exists(RSVP_FILE):
-        with open(RSVP_FILE, 'r') as file:
-            return json.load(file)
-    else:
-        return []
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute('SELECT * FROM rsvps')
+    rsvps = c.fetchall()
+    conn.close()
+    return rsvps
 
-# Function to save RSVP data to file
-def save_rsvps(rsvps):
-    with open(RSVP_FILE, 'w') as file:
-        json.dump(rsvps, file)
+# Function to save RSVP data to the database
+def save_rsvps(name, num_people, attendees, comments):
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute('''
+        INSERT INTO rsvps (name, num_people, attendees, comments)
+        VALUES (?, ?, ?, ?)
+    ''', (name, num_people, attendees, comments))
+    conn.commit()
+    conn.close()
 
 # Function to display the invitation
 def display_invitation():
@@ -48,14 +70,7 @@ def rsvp_form():
         submit_button = st.form_submit_button(label='Submit RSVP')
 
         if submit_button:
-            rsvps = load_rsvps()
-            rsvps.append({
-                'name': name,
-                'num_people': num_people,
-                'attendees': attendees,
-                'comments': comments
-            })
-            save_rsvps(rsvps)
+            save_rsvps(name, num_people, attendees, comments)
             st.success("Thank you for your RSVP!")
 
 # Function to display all RSVPs
@@ -63,13 +78,14 @@ def display_rsvps():
     rsvps = load_rsvps()
     if rsvps:
         st.subheader("RSVP List")
-        df = pd.DataFrame(rsvps)
+        df = pd.DataFrame(rsvps, columns=['ID', 'Name', 'Number of People', 'Attendees', 'Comments'])
         st.table(df)
     else:
         st.write("No RSVPs yet.")
 
 # Main function to run the Streamlit app
 def main():
+    init_db()
     display_invitation()
     rsvp_form()
     display_rsvps()
